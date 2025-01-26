@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 
 import Login from "./pages/Login";
 import AddUsers from "./pages/AddUsers";
-import StatsReports from "./pages/statsReport";
+// import StatsReports from "./pages/StatsReport.jsx";
 import UserLists from "./pages/UserLists";
 import GetStats from "./cityManagerRoutes/GetStats";
 import GetCityManagers from "./cityManagerRoutes/getCityManagers";
@@ -73,14 +73,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path="/reports"
           element={
             <ProtectedRoute role="admin">
               <StatsReports />
             </ProtectedRoute>
           }
-        />
+        /> */}
         <Route
           path="/users"
           element={
