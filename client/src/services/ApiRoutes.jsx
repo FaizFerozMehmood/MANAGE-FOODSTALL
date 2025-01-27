@@ -1,28 +1,22 @@
+const BASE_URL = "https://footstall-api.vercel.app/";
+
 export const url = {
-  baseApiUrl: "https://backend-apis-ashy.vercel.app/",
-  stats: "https://backend-apis-ashy.vercel.app/api/admin/stats",
-  downloadReports:
-    "https://backend-apis-ashy.vercel.app/api/admin/stats-report",
-  addUser: "https://backend-apis-ashy.vercel.app/api/admin/add-user",
-  getUsers: "https://backend-apis-ashy.vercel.app/api/admin/users",
-
-  //cityManagerRoutes
+  baseApiUrl: BASE_URL,
+  stats: `${BASE_URL}api/admin/stats`,
+  downloadReports: `${BASE_URL}api/admin/stats-report`,
+  addUser: `${BASE_URL}api/admin/add-user`,
+  getUsers: `${BASE_URL}api/admin/users`,
+  // cityManagerRoutes
   // getting city stats
-  getcityStats:
-    "https://backend-apis-ashy.vercel.app/api/users/city-manager/stats",
+  getcityStats: `${BASE_URL}api/users/city-manager/stats`,
 
-  //create branch manager in the city
-  createBranchManger:
-    "https://backend-apis-ashy.vercel.app/api/city-manager/branch-managers",
+  // create branch manager in the city
+  createBranchManger: `${BASE_URL}api/city-manager/branch-managers`,
 
-  getAllBranchManagers:
-    "https://backend-apis-ashy.vercel.app/api/city-manager/branch-managers",
-  updatateBranchManager:
-    "https://backend-apis-ashy.vercel.app/api/city-manager/branch-managers",
+  getAllBranchManagers: `${BASE_URL}api/city-manager/branch-managers`,
+  updatateBranchManager: `${BASE_URL}api/city-manager/branch-managers`,
 
-  //    Branch manager routes
-  getBranchHistory:
-    "https://backend-apis-ashy.vercel.app/api/branch-manager/branch-stats",
-  PostRegulerUpdates:
-    "https://backend-apis-ashy.vercel.app/api/branch-manager/add-food-log",
+  // Branch manager routes
+  getBranchHistory: `${BASE_URL}api/branch-manager/branch-stats`,
+  PostRegulerUpdates: `${BASE_URL}api/branch-manager/add-food-log`,
 };
