@@ -1,13 +1,10 @@
-
-
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { url } from "../services/ApiRoutes.jsx";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,36 +14,59 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-// import { UserContext } from "../context/UserContext.jsx";
 import Loader from "../components/loader/Loader.jsx";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
+const defaultColors = [
+  "rgba(255, 99, 132, 0.6)",
+  "rgba(54, 162, 235, 0.6)",
+  "rgba(255, 206, 86, 0.6)",
+  "rgba(75, 192, 192, 0.6)",
+  "rgba(153, 102, 255, 0.6)",
+  "rgba(255, 159, 64, 0.6)",
+];
+
+const prepareBarChartData = (branchStats) => ({
+  labels: branchStats.map((branch) => branch.branch),
+  datasets: [
+    {
+      label: "Total Food Served",
+      data: branchStats.map((branch) => branch.foodServed),
+      backgroundColor: "rgba(75, 192, 192, 0.6)",
+      borderColor: "rgba(75, 192, 192, 1)",
+      borderWidth: 1,
+    },
+  ],
+});
+
+const preparePieChartData = (branchStats) => ({
+  labels: branchStats?.map((branch) => branch.branch),
+  datasets: [
+    {
+      label: "Food Served",
+      data: branchStats?.map((branch) => branch.foodServed),
+      backgroundColor: defaultColors.slice(0, branchStats?.length || 0),
+    },
+  ],
+});
+
 function Dashboard() {
   const [loading, setLoading] = useState(false);
-
-  // const { user, storeUserName } = useContext(UserContext);
   const [stats, setStats] = useState(null);
   const token = Cookies.get("userToken");
-  console.log(token);
-  
+  const userName = Cookies.get("userName");
 
   useEffect(() => {
-    // const savedUserName = Cookies.get("userName");
-    // if (!user && savedUserName) {
-    //   // storeUserName(savedUserName);
-    // }
-
     const fetchStats = async () => {
       if (!token) {
-        throw new Error("Token not found");
+        toast.error("Token not found");
+        return;
       }
       try {
         setLoading(true);
         const response = await axios.get(url.stats, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setStats(response.data);
       } catch (error) {
@@ -59,46 +79,34 @@ function Dashboard() {
     fetchStats();
   }, [token]);
 
-  if (loading) return <Loader />;
-  if (!stats) return <Loader />;
+  if (loading || !stats) return <Loader />;
 
-  const barChartData = {
-    labels: stats.cityStats.map((city) => city.city),
-    datasets: [
-      {
-        label: "Total Food Served",
-        data: stats.cityStats.map((city) => city.totalFoodServed),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  if (!stats.cityStats || stats.cityStats.length === 0) {
+    return <p className="text-center text-gray-700">No data available to display.</p>;
+  }
 
-  const firstCity = stats.cityStats[0];
-  const pieChartData = {
-    labels: firstCity.branchStats.map((branch) => branch.branch),
-    datasets: [
-      {
-        label: "Food Served",
-        data: firstCity.branchStats.map((branch) => branch.foodServed),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-        ],
-      },
-    ],
-  };
+  const allBranchStats = stats.cityStats.flatMap((city) => city.branchStats);
+  const barChartData = prepareBarChartData(allBranchStats);
+  const pieChartData = preparePieChartData(allBranchStats);
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-5">
+      <h2
+        style={{
+          display: "flex",
+          placeContent: "center",
+          fontSize: "25px",
+          marginBottom: "50px",
+          marginTop: "5px",
+          backgroundColor: "grey",
+          padding: "40px",
+          color: "white",
+        }}
+      >
+        Welcome {userName ? userName : "ADMIN"}! 👋
+      </h2>
+
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-          {/* Welcome {user || "Guest"}! 👋 */}
-        </h1>
         <p className="text-lg text-gray-600 text-center mb-4">
           Total Food Served: <span className="font-semibold">{stats.totalFoodServed}</span>
         </p>
@@ -106,15 +114,16 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white shadow-md p-6 rounded-lg">
             <h3 className="text-xl font-semibold text-gray-700 mb-4 text-center">
-              City-wise Food Served
+              Branch-wise Food Served
             </h3>
             <div className="h-80">
               <Bar data={barChartData} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
           </div>
+
           <div className="bg-white shadow-md p-6 rounded-lg">
             <h3 className="text-xl font-semibold text-gray-700 mb-4 text-center">
-              Branch-wise Distribution in {firstCity.city}
+              Branch-wise Distribution
             </h3>
             <div className="h-80">
               <Pie data={pieChartData} options={{ responsive: true, maintainAspectRatio: false }} />
@@ -122,6 +131,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
       <ToastContainer />
     </div>
   );

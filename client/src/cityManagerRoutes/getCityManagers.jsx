@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { url } from "../services/ApiRoutes";
+import Loader from "../components/loader/Loader";
 
 function GetCityManagers() {
   const [managers, setManagers] = useState([]);
   const [error, setError] = useState(null);
   const [editingManager, setEditingManager] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({}); 
+  const [isLoading, setIsLoading] = useState(false); 
   const token = Cookies.get("userToken");
 
   const getManagers = async () => {
@@ -17,15 +19,18 @@ function GetCityManagers() {
     }
 
     try {
+      setIsLoading(true)
       const response = await axios.get(url.getAllBranchManagers, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setManagers(response.data?.branchManagers || []);
+      setIsLoading(false)
     } catch (error) {
       console.error("Error getting branch managers:", error);
       setError("Failed to fetch branch managers. Please try again later.");
+      setIsLoading(false)
     }
   };
 
@@ -56,6 +61,7 @@ function GetCityManagers() {
     } catch (error) {
       console.error("Error updating branch manager:", error);
       setError("Failed to update branch manager. Please try again later.");
+      setIsLoading(false)
     }
   };
 
@@ -198,7 +204,8 @@ function GetCityManagers() {
         </table>
       ) : (
         <p style={{ color: "#666", fontSize: "16px" }}>
-          No branch managers found.
+          {/* No branch managers user found. */}
+          {isLoading? <Loader/> :""}
         </p>
       )}
 

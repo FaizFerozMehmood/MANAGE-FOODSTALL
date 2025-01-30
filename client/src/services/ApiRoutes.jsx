@@ -1,5 +1,4 @@
 const BASE_URL = "https://footstall-api.vercel.app/";
-
 export const url = {
   baseApiUrl: BASE_URL,
   stats: `${BASE_URL}api/admin/stats`,
@@ -19,4 +18,7 @@ export const url = {
   // Branch manager routes
   getBranchHistory: `${BASE_URL}api/branch-manager/branch-stats`,
   PostRegulerUpdates: `${BASE_URL}api/branch-manager/add-food-log`,
+
+
+  sendEmail : `${BASE_URL}api/email/send`
 };

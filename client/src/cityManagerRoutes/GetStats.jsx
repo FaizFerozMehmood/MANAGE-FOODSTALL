@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { url } from "../services/ApiRoutes";
+import Loader from "../components/loader/Loader";
 
 function GetStats() {
   const [stats, setStats] = useState([]);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const token = Cookies.get("userToken");
 
   const FetchCityStats = async () => {
@@ -15,22 +18,28 @@ function GetStats() {
     }
 
     try {
+      setIsLoading(true)
       const response = await axios.get(url.getcityStats, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setStats(response.data?.foodLogs || []);
+      setIsLoading(false)
     } catch (err) {
       console.error("Error getting city stats", err);
       setError("Failed to fetch city stats. Please try again later.");
+      setIsLoading(false)
     }
   };
 
   useEffect(() => {
     FetchCityStats();
   }, []);
-
+if(!stats.length){
+  console.log("no stats available!");
+  
+}
   return (
     <div
       style={{
@@ -116,7 +125,7 @@ function GetStats() {
             </tr>
           </thead>
           <tbody>
-            {stats.map((log) => (
+            {stats?.map((log) => (
               <tr
                 key={log._id}
                 style={{
@@ -170,7 +179,7 @@ function GetStats() {
             fontSize: "16px",
           }}
         >
-          No stats available.
+         {isLoading ?<Loader/> :""}
         </p>
       )}
     </div>

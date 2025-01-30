@@ -1,167 +1,151 @@
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { url } from "../services/ApiRoutes";
-// import { url } from "../services/ApiRoutes";
 
-const UploadStats = () => {
-  const [formData, setFormData] = useState({
-    foodServed: "",
-    peopleServed: "",
-    city: "",
-    branch: "",
-    latitude: "",
-    longitude: "",
-    picture: null,
-  });
+function UploadStats() {
+  const [foodServed, setFoodServed] = useState("");
+  const [peopleServed, setPeopleServed] = useState("");
+  const [city, setCity] = useState("");
+  const [date, setDate] = useState("");
+  const [branch, setBranch] = useState("");
+  const [mealType, setMealType] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const token = Cookies.get("userToken");
 
-  const [message, setMessage] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      picture: e.target.files[0],
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const token = Cookies.get("userToken");
-    if (!token) {
-      setMessage("Token not found! Please log in.");
+  const handleAddData = async () => {
+    if (!foodServed || !peopleServed || !city || !branch || !date || !mealType) {
+      setError("Please fill out all fields.");
       return;
     }
-
-    const data = new FormData();
-    data.append("foodServed", formData.foodServed);
-    data.append("peopleServed", formData.peopleServed);
-    data.append("city", formData.city);
-    data.append("branch", formData.branch);
-    data.append("latitude", formData.latitude);
-    data.append("longitude", formData.longitude);
-    if (formData.picture) {
-      data.append("picture", formData.picture);
-    }
+    setError("");
+    const obj = {
+      foodServed,
+      peopleServed,
+      city,
+      branch,
+      date,
+      mealType,
+    };
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(url.PostRegulerUpdates, data, {
+      const response = await axios.post(url.PostRegulerUpdates, obj, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
-      setMessage(response.data.message);
-      console.log(response);
-      
+      if (response.status === 201) {
+        setIsLoading(false);
+        alert("Data added successfully!");
+        setFoodServed("");
+        setPeopleServed("");
+        setCity("");
+        setBranch("");
+        setDate("");
+        setMealType("");
+      }
     } catch (error) {
-      setMessage("Error adding food log: " + error.response?.data?.message || error.message);
+      setIsLoading(false);
+      console.error(error);
+      setError("Failed to add data. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-lg p-6 max-w-lg w-full"
-      >
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">
-          Add Food Log
-        </h1>
-        <div className="mb-4">
-          <label className="block text-gray-700">Food Served</label>
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-xl font-semibold text-center mb-4">Upload Stats</h2>
+      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+      <form className="space-y-4">
+        <div>
+          <label htmlFor="foodServed" className="block text-sm font-medium">
+            Food Served
+          </label>
           <input
+            id="foodServed"
+            value={foodServed}
+            onChange={(e) => setFoodServed(e.target.value)}
             type="number"
-            name="foodServed"
-            value={formData.foodServed}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter food served"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">People Served</label>
+        <div>
+          <label htmlFor="peopleServed" className="block text-sm font-medium">
+            People Served
+          </label>
           <input
+            id="peopleServed"
+            value={peopleServed}
+            onChange={(e) => setPeopleServed(e.target.value)}
             type="number"
-            name="peopleServed"
-            value={formData.peopleServed}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter people served"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">City</label>
+        <div>
+          <label htmlFor="mealType" className="block text-sm font-medium">
+            Meal Type
+          </label>
           <input
+            id="mealType"
+            value={mealType}
+            onChange={(e) => setMealType(e.target.value)}
             type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter meal type"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Branch</label>
+        <div>
+          <label htmlFor="city" className="block text-sm font-medium">
+            City
+          </label>
           <input
+            id="city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             type="text"
-            name="branch"
-            value={formData.branch}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter city"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Latitude</label>
+        <div>
+          <label htmlFor="branch" className="block text-sm font-medium">
+            Branch
+          </label>
           <input
-            type="number"
-            name="latitude"
-            value={formData.latitude}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
+            id="branch"
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+            type="text"
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter branch"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Longitude</label>
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium">
+            Date
+          </label>
           <input
-            type="number"
-            name="longitude"
-            value={formData.longitude}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Picture</label>
-          <input
-            type="file"
-            name="picture"
-            onChange={handleFileChange}
-            className="w-full px-4 py-2"
+            id="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            type="date"
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          type="button"
+          onClick={handleAddData}
+          className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none disabled:bg-gray-400"
+          disabled={isLoading}
         >
-          Submit
+          {isLoading ? "Please wait..." : "Add Data"}
         </button>
-        {message && <p className="mt-4 text-center text-gray-600">{message}</p>}
       </form>
     </div>
   );
-};
+}
 
 export default UploadStats;
