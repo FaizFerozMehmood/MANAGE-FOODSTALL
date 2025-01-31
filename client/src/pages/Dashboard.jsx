@@ -15,6 +15,7 @@ import {
   Legend,
 } from "chart.js";
 import Loader from "../components/loader/Loader.jsx";
+import EmailForm from "../services/Email.jsx";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -103,7 +104,7 @@ function Dashboard() {
           color: "white",
         }}
       >
-        Welcome {userName ? userName : "ADMIN"}! 👋
+        Welcome {userName ? userName +" " +"(Admin)": "ADMIN"}! 👋
       </h2>
 
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8">
@@ -133,6 +134,7 @@ function Dashboard() {
       </div>
 
       <ToastContainer />
+      <EmailForm/>
     </div>
   );
 }

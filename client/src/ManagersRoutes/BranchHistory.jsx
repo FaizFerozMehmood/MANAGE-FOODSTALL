@@ -51,7 +51,6 @@ function BranchHistory() {
         Welcome {userName ? userName : "Manager"}! 👋
       </h3>
 
-      {/* Description Section */}
       <p
         style={{
           color: "white",
@@ -69,7 +68,6 @@ function BranchHistory() {
         your services.😍
       </p>
 
-      {/* Data Cards */}
       {data.length ? (
         <div
           style={{
