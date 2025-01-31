@@ -96,17 +96,34 @@ function Dashboard() {
         style={{
           display: "flex",
           placeContent: "center",
-          fontSize: "25px",
+          fontSize: "20px",
           marginBottom: "50px",
-          marginTop: "5px",
-          backgroundColor: "grey",
+          marginTop: "0px",
+          backgroundColor: "black",
           padding: "40px",
           color: "white",
+          borderRadius: "8px",
+
         }}
       >
         Welcome {userName ? userName +" " +"(Admin)": "ADMIN"}! 👋
       </h2>
-
+      <p
+        style={{
+          color: "white",
+          backgroundColor: "black",
+          textAlign: "center",
+          fontSize: "18px",
+          padding: "15px",
+          margin: "20px 0",
+          borderRadius: "8px",
+        }}
+      >
+        Welcome to Admin Dashboard! Here, you can view detailed insights
+        into the operations of your branches. Explore key metrics such as
+        branch location, served cities, operational dates, and the impact of
+        your services.😍
+      </p>
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <p className="text-lg text-gray-600 text-center mb-4">
           Total Food Served: <span className="font-semibold">{stats.totalFoodServed}</span>
