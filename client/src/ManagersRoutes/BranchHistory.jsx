@@ -8,7 +8,6 @@ function BranchHistory() {
   const token = Cookies.get("userToken");
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const userName = Cookies.get("userName");
 
   const fetchBranchStats = async () => {
@@ -16,18 +15,15 @@ function BranchHistory() {
       throw new Error("Token not found");
     }
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await axios.get(url.getBranchHistory, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data?.history || []);
-      // console.log(response.data?.history?.branch);
-      setIsLoading(false)
+      setIsLoading(false);
     } catch (error) {
       console.log("Error fetching branch history:", error);
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -43,8 +39,8 @@ function BranchHistory() {
           backgroundColor: "green",
           border: "1px solid black",
           textAlign: "center",
-          fontSize: "30px",
-          padding: "15px 0",
+          fontSize: "25px",
+          padding: "12px",
           borderRadius: "8px",
         }}
       >
@@ -56,9 +52,9 @@ function BranchHistory() {
           color: "white",
           backgroundColor: "black",
           textAlign: "center",
-          fontSize: "18px",
-          padding: "15px",
-          margin: "20px 0",
+          fontSize: "16px",
+          padding: "12px",
+          margin: "15px 0",
           borderRadius: "8px",
         }}
       >
@@ -68,12 +64,23 @@ function BranchHistory() {
         your services.😍
       </p>
 
-      {data.length ? (
+      {isLoading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "200px",
+          }}
+        >
+          <Loader />
+        </div>
+      ) : data.length ? (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "15px",
             marginTop: "20px",
           }}
         >
@@ -84,19 +91,19 @@ function BranchHistory() {
                 backgroundColor: "#f8f9fa",
                 border: "1px solid #ddd",
                 borderRadius: "10px",
-                padding: "20px",
+                padding: "15px",
                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                 textAlign: "center",
                 transition: "transform 0.2s",
+                width: "100%",
+                maxWidth: "350px",
+                margin: "auto",
               }}
               onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
               onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
               <img
-                src={
-                  
-                  "https://images.unsplash.com/photo-1484980972926-edee96e0960d?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                }
+                src="https://images.unsplash.com/photo-1484980972926-edee96e0960d?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Branch"
                 style={{
                   width: "100%",
@@ -106,7 +113,7 @@ function BranchHistory() {
                   marginBottom: "10px",
                 }}
               />
-              <h3 style={{ color: "#333", marginBottom: "10px" }}>
+              <h3 style={{ color: "#333", fontSize: "20px", marginBottom: "8px" }}>
                 Branch: {value.branch}
               </h3>
               <h4 style={{ color: "#666", marginBottom: "5px" }}>
@@ -119,17 +126,17 @@ function BranchHistory() {
                 People Served: {value.peopleServed}
               </h4>
               <h4 style={{ color: "#666", marginBottom: "5px" }}>
-  Date: {new Date(value.date).toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  })}
-</h4>
-
+                Date:{" "}
+                {new Date(value.date).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: true,
+                })}
+              </h4>
             </div>
           ))}
         </div>
@@ -140,11 +147,11 @@ function BranchHistory() {
             justifyContent: "center",
             alignItems: "center",
             height: "200px",
-            fontSize: "20px",
+            fontSize: "18px",
             color: "#666",
           }}
         >
-          {isLoading? <Loader/> :""}
+          No branch history found.
         </p>
       )}
     </div>
